@@ -121,3 +121,18 @@ func (d *Docker) Run() DockerResult {
 		Result:      "success",
 	}
 }
+
+func (d *Docker) Stop(id string) DockerResult {
+	log.Printf("Attempting to stop container %v", id)
+	ctx := context.Background()
+	err := d.Client.ContainerStop(ctx, id, container.StopOptions{})
+	if err != nil {
+		log.Printf("Error stoping container: %v %v\n", id, err)
+		panic(err)
+	}
+	err = d.Client.ContainerRemove(ctx, id, container.RemoveOptions{})
+	if err != nil {
+		panic(err)
+	}
+	return DockerResult{Action: "stop", Result: "success", Error: nil}
+}

@@ -1,6 +1,8 @@
 package manager
 
 import (
+	"fmt"
+
 	"github.com/golang-collections/collections/queue"
 	"github.com/google/uuid"
 	. "github.com/mnm458/gorchestrator/task"
@@ -16,13 +18,14 @@ type Manager struct {
 }
 
 func (m *Manager) SelectWorker() {
-
+	fmt.Println("SelectWorker called")
 }
 
 func (m *Manager) UpdateTasks() {
-
+	fmt.Println("UpdateTasks called")
 }
 
 func (m *Manager) SendWork() {
+	fmt.Println("SendWork called")
 
 }

@@ -1,6 +1,8 @@
 package worker
 
 import (
+	"fmt"
+
 	"github.com/golang-collections/collections/queue"
 	"github.com/google/uuid"
 	"github.com/mnm458/gorchestrator/task"
@@ -18,12 +20,16 @@ func (w *Worker) RunTask() error {
 }
 
 func (w *Worker) StartTask() {
+	fmt.Println("StartTask called")
+
 }
 
 func (w *Worker) StopTask() {
+	fmt.Println("StopTask called")
 
 }
 
 func (w *Worker) CollectStats() {
+	fmt.Println("CollectStats called")
 
 }
