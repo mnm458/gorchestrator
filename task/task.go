@@ -27,6 +27,7 @@ const (
 
 type Task struct {
 	ID            uuid.UUID
+	ContainerID   string
 	Name          string
 	State         State
 	Image         string
@@ -73,6 +74,27 @@ type DockerResult struct {
 	Action      string
 	ContainerId string
 	Result      string
+}
+
+var stateTransitionMap = map[State][]State{
+	Pending:   []State{Scheduled},
+	Scheduled: []State{Scheduled, Running, Failed},
+	Running:   []State{Running, Completed, Failed},
+	Completed: []State{},
+	Failed:    []State{},
+}
+
+func Contains(states []State, state State) bool {
+	for _, s := range states {
+		if s == state {
+			return true
+		}
+	}
+	return false
+}
+
+func ValidStateTransition(src State, dst State) bool {
+	return Contains(stateTransitionMap[src], dst)
 }
 
 func (d *Docker) Run() DockerResult {
@@ -135,4 +157,46 @@ func (d *Docker) Stop(id string) DockerResult {
 		panic(err)
 	}
 	return DockerResult{Action: "stop", Result: "success", Error: nil}
+}
+
+// ID            uuid.UUID
+//
+//	Name          string
+//	State         State
+//	Image         string
+//	Memory        int
+//	Disk          int
+//	ExposedPorts  nat.PortSet
+//	PortBindings  map[string]string
+//	RestartPolicy string
+//	StartTime     time.Time
+//	FinishTime    time.Time
+func NewConfig(t *Task) Config {
+	return Config{
+		Name:         t.Name,
+		AttachStdin:  true,
+		AttachStdout: true,
+		AttachStderr: true,
+		// AttachStdin   bool
+		// AttachStdout  bool
+		// AttachStderr  bool
+		// Cmd           []string
+		// Image         string
+		// Memory        int64
+		// Disk          int64
+		// Env           []string
+		// RestartPolicy string
+		// Runtime       Runtime
+	}
+}
+
+func NewDocker(c Config) (*Docker, error) {
+	newClient, err := client.NewClientWithOpts(client.FromEnv)
+	if err != nil {
+		return nil, err
+	}
+	return &Docker{
+		Client: newClient,
+		Config: c,
+	}, nil
 }
