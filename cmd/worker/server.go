@@ -4,12 +4,16 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"fmt"
+	"log"
+	"net"
 
-	"github.com/google/martian/log"
+	"github.com/golang-collections/collections/queue"
 	"github.com/google/uuid"
 	pb "github.com/mnm458/gorchestrator/api"
 	"github.com/mnm458/gorchestrator/task"
 	"github.com/mnm458/gorchestrator/worker"
+	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -38,7 +42,6 @@ func (ws *WorkerServer) StartTask(ctx context.Context, req *pb.StartTaskRequest)
 		RestartPolicy: req.TaskEvent.Task.RestartPolicy,
 	}
 	ws.worker.AddTask(t)
-	log.Info("Task added")
 	return &pb.StartTaskResponse{
 		Task: &pb.Task{
 			Id:            t.ID[:],
@@ -97,4 +100,31 @@ func packTasks(tasks []*task.Task) []*pb.Task {
 		res = append(res, protoTask)
 	}
 	return res
+}
+
+func main() {
+	// flag.Parse()
+	// lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	// if err != nil {
+	// 	log.Fatalf("failed to listen: %v", err)
+	// }
+	// s := grpc.NewServer()
+	// pb.RegisterGreeterServer(s, &server{})
+	// log.Printf("server listening at %v", lis.Addr())
+	// if err := s.Serve(lis); err != nil {
+	// 	log.Fatalf("failed to serve: %v", err)
+	flag.Parse()
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterWorkerServiceServer(s, &WorkerServer{worker: &worker.Worker{
+		Queue: *queue.New(),
+		Db:    make(map[uuid.UUID]*task.Task),
+	}})
+	log.Printf("server listening at %v", lis.Addr())
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }
