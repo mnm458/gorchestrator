@@ -10,11 +10,11 @@ service WorkerService {
 }
 
 message StartTaskRequest {
-
+    TaskEvent task_event = 1;
 }
 
 message StartTaskResponse {
-
+    Task task = 1;
 }
 
 message TaskEvent {
