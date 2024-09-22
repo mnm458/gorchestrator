@@ -92,3 +92,13 @@ func (w *Worker) CollectStats() {
 	fmt.Println("CollectStats called")
 
 }
+
+func (w *Worker) GetTasks() []*task.Task {
+	res := make([]*task.Task, len(w.Db))
+	i := 0
+	for _, t := range w.Db {
+		res[i] = t
+		i++
+	}
+	return res
+}

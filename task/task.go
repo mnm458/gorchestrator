@@ -26,25 +26,25 @@ const (
 )
 
 type Task struct {
-	ID            uuid.UUID
-	ContainerID   string
-	Name          string
-	State         State
-	Image         string
-	Memory        int
-	Disk          int
-	ExposedPorts  nat.PortSet
-	PortBindings  map[string]string
-	RestartPolicy string
-	StartTime     time.Time
-	FinishTime    time.Time
+	ID            uuid.UUID         `protobuf:"bytes,1,opt,name=id"`
+	ContainerID   string            `protobuf:"bytes,2,opt,name=container_id,json=containerId"`
+	Name          string            `protobuf:"bytes,3,opt,name=name"`
+	State         State             `protobuf:"varint,4,opt,name=state"`
+	Image         string            `protobuf:"bytes,5,opt,name=image"`
+	Memory        int               `protobuf:"varint,6,opt,name=memory"`
+	Disk          int               `protobuf:"varint,7,opt,name=disk"`
+	ExposedPorts  nat.PortSet       `protobuf:"bytes,8,rep,name=exposed_ports,json=exposedPorts"`
+	PortBindings  map[string]string `protobuf:"bytes,9,rep,name=port_bindings,json=portBindings"`
+	RestartPolicy string            `protobuf:"bytes,10,opt,name=restart_policy,json=restartPolicy"`
+	StartTime     time.Time         `protobuf:"bytes,11,opt,name=start_time,json=startTime"`
+	FinishTime    time.Time         `protobuf:"bytes,12,opt,name=finish_time,json=finishTime"`
 }
 
 type TaskEvent struct {
-	ID        uuid.UUID
-	State     State
-	Timestamp time.Time
-	Task      Task
+	ID        uuid.UUID `protobuf:"bytes,1,opt,name=id"`
+	State     State     `protobuf:"varint,2,opt,name=state"`
+	Timestamp time.Time `protobuf:"bytes,3,opt,name=timestamp"`
+	Task      Task      `protobuf:"bytes,4,opt,name=task"`
 }
 
 type Config struct {
