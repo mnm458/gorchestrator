@@ -1,7 +1,8 @@
 # gorchestrator
 
 A container orchestrator written purely in go
-![image](https://github.com/user-attachments/assets/f86afded-befd-4106-a68b-6367840a96f8)
+![image](https://github.com/user-attachments/assets/027571eb-0dd2-49ff-bfa2-3ac9ebe80af6)
+
 
 ## Components
 
