@@ -2,11 +2,14 @@ syntax = "proto3";
 
 option go_package = "github.com/mnm458/gorchestrator/api";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 package api;
 
 service WorkerService {
     rpc StartTask(StartTaskRequest) returns (StartTaskResponse) {}
+    rpc GetTasks(google.protobuf.Empty) returns (GetTasksResponse){}
+    rpc StopTask(StopTaskRequest) returns (google.protobuf.Empty) {}
 }
 
 message StartTaskRequest {
@@ -43,4 +46,12 @@ message Task {
 
     google.protobuf.Timestamp start_time = 11; // StartTime as Timestamp
     google.protobuf.Timestamp finish_time = 12; // FinishTime as Timestamp
+}
+
+message GetTasksResponse{
+    repeated Task tasks = 1;
+}
+
+message StopTaskRequest{
+    bytes id = 1;
 }
