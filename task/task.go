@@ -177,6 +177,8 @@ func NewConfig(t *Task) Config {
 		AttachStdin:  true,
 		AttachStdout: true,
 		AttachStderr: true,
+		Image:        t.Image,
+		Memory:       int64(t.Memory),
 		// AttachStdin   bool
 		// AttachStdout  bool
 		// AttachStderr  bool

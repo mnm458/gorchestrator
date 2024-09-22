@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "github.com/mnm458/gorchestrator/api";
+
+package api;
+
+service WorkerService {
+    rpc StartTask(StartTaskRequest) returns (StartTaskResponse) {}
+}
+
+message StartTaskRequest {
+
+}
+
+message StartTaskResponse {
+
+}
