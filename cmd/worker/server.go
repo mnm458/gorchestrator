@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"github.com/golang-collections/collections/queue"
 	"github.com/google/uuid"
@@ -30,7 +31,7 @@ func (ws *WorkerServer) StartTask(ctx context.Context, req *pb.StartTaskRequest)
 	var taskEvent task.TaskEvent
 	taskEvent.ID = uuid.UUID(req.TaskEvent.Id)
 	taskEvent.State = task.State(req.TaskEvent.State)
-	taskEvent.Timestamp = req.TaskEvent.Timestamp.AsTime()
+	taskEvent.Timestamp = time.Now()
 	t := task.Task{
 		ID:            uuid.UUID(req.TaskEvent.Task.Id),
 		ContainerID:   req.TaskEvent.Task.ContainerId,
@@ -102,6 +103,21 @@ func packTasks(tasks []*task.Task) []*pb.Task {
 	return res
 }
 
+func runTasks(w *worker.Worker) {
+	for {
+		if w.Queue.Len() != 0 {
+			res := w.RunTask()
+			if res.Error != nil {
+				log.Printf("Error running task: %v", res.Error)
+			}
+		} else {
+			log.Printf("No tasks to process currently")
+		}
+		log.Println("Sleeping for 10 seconds")
+		time.Sleep(10 * time.Second)
+	}
+}
+
 func main() {
 	// flag.Parse()
 	// lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
@@ -119,11 +135,13 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterWorkerServiceServer(s, &WorkerServer{worker: &worker.Worker{
+	w := &worker.Worker{
 		Queue: *queue.New(),
 		Db:    make(map[uuid.UUID]*task.Task),
-	}})
+	}
+	pb.RegisterWorkerServiceServer(s, &WorkerServer{worker: w})
 	log.Printf("server listening at %v", lis.Addr())
+	go runTasks(w)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
