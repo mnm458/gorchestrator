@@ -102,3 +102,10 @@ func (w *Worker) GetTasks() []*task.Task {
 	}
 	return res
 }
+
+func NewWorker(name string) *Worker {
+	return &Worker{
+		Queue: *queue.New(),
+		Db:    make(map[uuid.UUID]*task.Task),
+	}
+}
