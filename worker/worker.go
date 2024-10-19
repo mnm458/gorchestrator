@@ -12,10 +12,11 @@ import (
 )
 
 type Worker struct {
-	Name      string
-	Queue     queue.Queue
-	Db        map[uuid.UUID]*task.Task
-	TaskCount int
+	Name             string
+	Queue            queue.Queue
+	Db               map[uuid.UUID]*task.Task
+	TaskCount        int
+	CadvisorEndpoint string
 }
 
 func (w *Worker) AddTask(t task.Task) {
@@ -103,9 +104,11 @@ func (w *Worker) GetTasks() []*task.Task {
 	return res
 }
 
-func NewWorker(name string) *Worker {
+func NewWorker(name string, cadvisorEndpoint string) *Worker {
+
 	return &Worker{
-		Queue: *queue.New(),
-		Db:    make(map[uuid.UUID]*task.Task),
+		Queue:            *queue.New(),
+		Db:               make(map[uuid.UUID]*task.Task),
+		CadvisorEndpoint: cadvisorEndpoint,
 	}
 }

@@ -29,3 +29,7 @@ func (m *Manager) SendWork() {
 	fmt.Println("SendWork called")
 
 }
+
+func (m *Manager) ProvisonWorkerNode() {
+	// -> calls the setup_worker_node
+}
