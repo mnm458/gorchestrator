@@ -1,4 +1,4 @@
-package mesh
+package integration
 
 import "github.com/hashicorp/consul/connect"
 

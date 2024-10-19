@@ -1,4 +1,4 @@
-package mesh
+package integration
 
 import (
 	"log"
@@ -23,7 +23,7 @@ func (m *MeshClient) SetupClient() {
 }
 
 // Must be run before the task is started on a worker node
-func (m *MeshClient) ConstructService(config *ServiceConfig) Service {
+func (m *MeshClient) RegisterTask(config *ServiceConfig) Service {
 	// Create a Consul service
 	service := &capi.AgentServiceRegistration{
 		Name: config.Name,
@@ -49,8 +49,9 @@ func (m *MeshClient) ConstructService(config *ServiceConfig) Service {
 	}
 }
 
-// Must be run after a task is finished
-func (m *MeshClient) DestructService(service *Service) {
+// Must be run after a task is finished.
+// Recommended to run in a deferred manner
+func (m *MeshClient) DeregisterTask(service *Service) {
 	m.ConsulClient.Agent().ServiceDeregister(service.Config.Name)
 	service.ConsulService.Close()
 }
